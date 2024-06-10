@@ -1,22 +1,22 @@
 --COMANDOS DDL (DATA DEFINITION LANGUAGE)
 
 
-CREATE TABLE emails_novos (
+CREATE TABLE emails (
     idEmail serial PRIMARY KEY,
     email varchar(100)
 );
 
-CREATE TABLE telefones_novos (
+CREATE TABLE telefones (
     idTelefone serial PRIMARY KEY,
     telefone varchar(100)
 );
 
-CREATE TABLE contatos_novos (
+CREATE TABLE contatos (
     idContato serial PRIMARY KEY,
     idEmail serial, 
-    CONSTRAINT fk_email_novo FOREIGN KEY (idEmail) REFERENCES emails_novos (idEmail),
+    CONSTRAINT fk_email FOREIGN KEY (idEmail) REFERENCES emails (idEmail),
     idTelefone serial,
-    CONSTRAINT fk_telefone_novo FOREIGN KEY (idTelefone) REFERENCES telefones_novos (idTelefone)
+    CONSTRAINT fk_telefone FOREIGN KEY (idTelefone) REFERENCES telefones (idTelefone)
 );
 
 CREATE TABLE enderecos_novos (
@@ -31,28 +31,28 @@ CREATE TABLE enderecos_novos (
 CREATE TABLE estudantes (
     registroAcademico INTEGER PRIMARY KEY UNIQUE,
     idEndereco serial,
-    CONSTRAINT fk_endereco_novo FOREIGN KEY (idEndereco) REFERENCES enderecos_novos (idEndereco),
+    CONSTRAINT fk_endereco FOREIGN KEY (idEndereco) REFERENCES enderecos (idEndereco),
     idContato serial,
-    CONSTRAINT fk_contato_novo FOREIGN KEY (idContato) REFERENCES contatos_novos (idContato),
+    CONSTRAINT fk_contato FOREIGN KEY (idContato) REFERENCES contatos (idContato),
     nome varchar(50),
     cpf varchar(11) UNIQUE,
     idade integer,
     graduado boolean
 );
 
-CREATE TABLE departamentos_novos (
+CREATE TABLE departamentos (
     idDepartamento serial PRIMARY KEY,
     nomeDepartamento varchar (50)
 );
 
-CREATE TABLE cursos_novos (
+CREATE TABLE cursos (
     idCurso serial PRIMARY KEY,
     nomeCurso varchar(50),
     idDepartamento serial,
-    CONSTRAINT fk_departamento_novo FOREIGN KEY (idDepartamento) REFERENCES departamentos_novos (idDepartamento)
+    CONSTRAINT fk_departamento FOREIGN KEY (idDepartamento) REFERENCES departamentos (idDepartamento)
 );
 
-CREATE TABLE disciplinas_novas (
+CREATE TABLE disciplinas (
     idDisciplina serial PRIMARY KEY,
     nomeDisciplina varchar (50),
     opcional boolean
@@ -63,9 +63,9 @@ CREATE TABLE matriculas (
     registroAcademico serial,
     CONSTRAINT fk_estudantes FOREIGN KEY (registroAcademico) REFERENCES estudantes (registroAcademico),
     idCurso serial,
-    CONSTRAINT fk_curso_novo FOREIGN KEY (idCurso) REFERENCES cursos_novos (idCurso),
+    CONSTRAINT fk_curso FOREIGN KEY (idCurso) REFERENCES cursos (idCurso),
     idDisciplina serial,
-    CONSTRAINT fk_disciplina_novo FOREIGN KEY (idDisciplina) REFERENCES disciplinas_novas (idDisciplina)
+    CONSTRAINT fk_disciplina FOREIGN KEY (idDisciplina) REFERENCES disciplinas (idDisciplina)
 );
 
 
@@ -73,7 +73,7 @@ CREATE TABLE matriculas (
 
 --COMANDOS DML (DATA MANIPULATION LANGUAGE)
 
-INSERT INTO emails_novos (email) VALUES 
+INSERT INTO emails (email) VALUES 
 ('joaodasilva@gmail.com'),
 ('mariaoliveira@hotmail.com'),
 ('pedroribeiro@gmail.com'),
@@ -85,7 +85,7 @@ INSERT INTO emails_novos (email) VALUES
 (''),
 ('andreluiz@gmail.com');
 
-INSERT INTO telefones_novos (telefone) VALUES 
+INSERT INTO telefones (telefone) VALUES 
 ('11987654321'),
 (''),
 ('11991234567'),
@@ -97,7 +97,7 @@ INSERT INTO telefones_novos (telefone) VALUES
 ('11998456321'),
 ('11997654321');
 
-INSERT INTO contatos_novos (idEmail, idTelefone) VALUES
+INSERT INTO contatos (idEmail, idTelefone) VALUES
 (1, 1),
 (2, 2),
 (3, 3),
@@ -109,7 +109,7 @@ INSERT INTO contatos_novos (idEmail, idTelefone) VALUES
 (9, 9),
 (10, 10);
 
-INSERT INTO enderecos_novos (logradouro, numero, cidade, estado, pais) VALUES 
+INSERT INTO enderecos (logradouro, numero, cidade, estado, pais) VALUES 
 ('Avenida Brasil','123','São Paulo','SP','Brasil'),
 ('Rua das Flores','456','Rio de Janeiro','RJ','Brasil'),
 ('Praça da Liberdade','789','Belo Horizonte','MG','Brasil'),
@@ -133,13 +133,13 @@ INSERT INTO estudantes (registroAcademico, idEndereco, idContato, nome, cpf, ida
 (1009, 9, 9, 'Carla Santos', '99999999999', 27, false),
 (1010, 10, 10, 'Paulo Henrique', '00000000000', 26, true);
 
-INSERT INTO departamentos_novos (nomeDepartamento) VALUES
+INSERT INTO departamentos (nomeDepartamento) VALUES
 ('Ciências da Saúde'),
 ('Tecnologia da Informação'),
 ('Engenharia'),
 ('Ciências Humanas');
 
-INSERT INTO cursos_novos (nomeCurso, idDepartamento) VALUES
+INSERT INTO cursos (nomeCurso, idDepartamento) VALUES
 ('Medicina', 1),
 ('Enfermagem', 1),
 ('Biomedicina', 1),
@@ -157,7 +157,7 @@ INSERT INTO cursos_novos (nomeCurso, idDepartamento) VALUES
 ('Sociologia', 4),
 ('Letras', 4);
 
-INSERT INTO disciplinas_novas (nomeDisciplina, opcional) VALUES
+INSERT INTO disciplinas (nomeDisciplina, opcional) VALUES
 ('Matemática Avançada', false),
 ('Física Moderna', false),
 ('História Geral', true),
@@ -203,71 +203,62 @@ INSERT INTO matriculas (registroAcademico, idCurso, idDisciplina) VALUES
 
 SELECT * FROM estudantes;
 SELECT * FROM matriculas;
-SELECT * FROM contatos_novos;
-SELECT * FROM cursos_novos;
-SELECT * FROM departamentos_novos;
-SELECT * FROM disciplinas_novas;
-SELECT * FROM emails_novos;
-SELECT * FROM enderecos_novos;
-SELECT * FROM telefones_novos;
+SELECT * FROM contatos;
+SELECT * FROM cursos;
+SELECT * FROM departamentos;
+SELECT * FROM disciplinas;
+SELECT * FROM emails;
+SELECT * FROM enderecos;
+SELECT * FROM telefones;
 
 -- Dado o registro acadêmico ou o nome do estudante, buscar no BD todos os demais dados do estudante.
 SELECT cpf, idade, graduado, logradouro, numero, cidade, estado, pais, email, telefone 
-FROM (estudantes NATURAL INNER JOIN enderecos_novos) 
-INNER JOIN contatos_novos USING (idContato)
-LEFT JOIN emails_novos USING (idEmail) 
-LEFT JOIN telefones_novos USING (idTelefone)
+FROM (estudantes NATURAL INNER JOIN enderecos) INNER JOIN contatos USING (idContato)
+LEFT JOIN emails USING (idEmail) 
+LEFT JOIN telefones USING (idTelefone) 
 WHERE nome='João da Silva' OR registroAcademico=1001;
 
 -- Dado o nome de um departamento, exibir o nome de todos os cursos associados a ele.
 SELECT nomeCurso 
-FROM (cursos_novos NATURAL INNER JOIN departamentos_novos) 
+FROM (cursos NATURAL INNER JOIN departamentos) 
 WHERE nomeDepartamento='Tecnologia da Informação';
 
 -- Dado o nome de uma disciplina, exibir a qual ou quais cursos ela pertence.
 SELECT DISTINCT nomeCurso 
-FROM (matriculas NATURAL INNER JOIN cursos_novos) 
-INNER JOIN disciplinas_novas USING (idDisciplina)
+FROM (matriculas NATURAL INNER JOIN cursos) 
+INNER JOIN disciplinas USING (idDisciplina)
 WHERE nomeDisciplina='Matemática Avançada';
 
 -- Dado o CPF de um estudante, exibir quais disciplinas ele está cursando.
 SELECT DISTINCT nomeDisciplina 
-FROM (matriculas NATURAL INNER JOIN disciplinas_novas) 
+FROM (matriculas NATURAL INNER JOIN disciplinas) 
 INNER JOIN estudantes USING (registroAcademico)
 WHERE cpf='11111111111';
 
 -- Filtrar todos os estudantes matriculados em um determinado curso.
 SELECT nome 
 FROM (matriculas NATURAL INNER JOIN estudantes) 
-INNER JOIN cursos_novos USING (idCurso)
+INNER JOIN cursos USING (idCurso)
 WHERE nomeCurso='Engenharia de Software';
 
 -- Filtrar todos os estudantes matriculados em determinada disciplina.
 SELECT nome 
 FROM (matriculas NATURAL INNER JOIN estudantes) 
-INNER JOIN disciplinas_novas USING (idDisciplina)
+INNER JOIN disciplinas USING (idDisciplina)
 WHERE nomeDisciplina='Física Moderna';
 
 -- Filtrar estudantes graduados.
-SELECT nome 
-FROM estudantes 
-WHERE graduado=true;
+SELECT nome FROM estudantes WHERE graduado=true;
 
 -- Filtrar estudantes não graduados (ativos).
-SELECT nome 
-FROM estudantes 
-WHERE graduado=false;
+SELECT nome FROM estudantes WHERE graduado=false;
 
 -- Apresentar a quantidade de estudantes ativos por curso.
-SELECT nomeCurso, COUNT(*) AS quantidade 
-FROM (matriculas NATURAL INNER JOIN estudantes) 
-INNER JOIN cursos_novos USING (idCurso)
+SELECT nomeCurso, COUNT(*) AS quantidade FROM (matriculas NATURAL INNER JOIN estudantes) INNER JOIN cursos USING (idCurso)
 WHERE graduado=false
 GROUP BY nomeCurso;
 
 -- Apresentar a quantidade de estudantes ativos por disciplina.
-SELECT nomeDisciplina, COUNT(*) AS quantidade 
-FROM (matriculas NATURAL INNER JOIN estudantes) 
-INNER JOIN disciplinas_novas USING (idDisciplina)
-WHERE graduado=false
+SELECT nomeDisciplina, COUNT(*) AS quantidade FROM (matriculas NATURAL INNER JOIN estudantes) 
+INNER JOIN disciplinas USING (idDisciplina) WHERE graduado=false
 GROUP BY nomeDisciplina;
