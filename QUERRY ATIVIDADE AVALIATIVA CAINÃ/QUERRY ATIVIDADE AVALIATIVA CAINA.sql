@@ -19,7 +19,7 @@ CREATE TABLE contatos (
     CONSTRAINT fk_telefone FOREIGN KEY (idTelefone) REFERENCES telefones (idTelefone)
 );
 
-CREATE TABLE enderecos_novos (
+CREATE TABLE enderecos (
     idEndereco serial PRIMARY KEY,
     logradouro varchar(50),
     numero integer,
